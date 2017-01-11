@@ -272,7 +272,9 @@ export default class ScrollableContainer extends Component {
     }
 
     capDraggedLeft(nextLeft, scrollLeft, widthContainer, elementMargin) {
-        const maxLeft = scrollLeft + widthContainer - elementMargin;
+        const { noDragStyle } = this.props;
+        const { width } = noDragStyle;
+        const maxLeft = scrollLeft + widthContainer - elementMargin - width;
 
         if (nextLeft > maxLeft) {
             return maxLeft;
