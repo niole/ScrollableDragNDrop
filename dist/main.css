@@ -1,0 +1,18 @@
+.draggable {
+  position: absolute;
+  display: inline-block;
+}
+
+.handle {
+  height: 10px;
+  width: 100%;
+  z-index: 1;
+  background: blue;
+}
+
+.test-element {
+  position: absolute;
+  height: 100px;
+  width: 100px;
+  background: green;
+}

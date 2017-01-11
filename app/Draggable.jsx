@@ -1,48 +1,54 @@
 import React, {PropTypes, Component} from 'react';
 
-const { bool, object, func } = PropTypes;
+const { bool, string, object, func, number } = PropTypes;
 const propTypes = {
-  style: object,
-  onDragStyle: object,
-  dragHandleStyle: object,
-  onDrag: func.isRequired,
-  onDragEnd: func.isRequired,
-  isDragging: bool.isRequired
+    dragStyle: object.isRequired,
+    onDrag: func.isRequired,
+    onDragEnd: func.isRequired,
+    noDragStyle: object.isRequired,
+    index: number.isRequired,
+    isDragging: bool.isRequired,
+    dragClass: string,
+    noDragClass: string,
+    handleClass: string,
+    handleStyle: object,
 };
+
 const defaultProps = {
-  style: {},
-  onDragStyle: {},
-  dragHandleStyle: {
-    left: 0,
-    top: 0,
-    width: 10,
-    height: 10
-  }
+    dragClass: "",
+    noDragClass: "",
+    handleClass: "",
+    handleStyle: {},
 };
 
 export default class Draggable extends Component {
-  render() {
-    const {
-      style,
-      onDragStyle,
-      dragHandleStyle,
-      onDrag,
-      onDragEnd,
-      isDragging,
-      children
-    } = this.props;
+    render() {
+        const {
+            dragStyle,
+            onDrag,
+            onDragEnd,
+            noDragStyle,
+            dragClass,
+            noDragClass,
+            handleClass,
+            handleStyle,
+            children,
+            isDragging,
+            index,
+        } = this.props;
 
-    return (
-      <div style={ isDragging ? onDragStyle : style }>
-        <div
-            style={ dragHandleStyle }
-            draggable="true"
-            onDrag={ onDrag }
-            onDragEnd={ onDragEnd }/>
-        { children }
-      </div>
-    );
-  }
+        return (
+            <div style={ isDragging ? dragStyle : noDragStyle } className="draggable">
+                <div
+                    style={ handleStyle }
+                    className="draggable handle"
+                    draggable="true"
+                    onDrag={ event => onDrag(event, index) }
+                    onDragEnd={ event => onDragEnd(index) }/>
+                { children }
+            </div>
+        );
+    }
 }
 
 Draggable.propTypes = propTypes;
