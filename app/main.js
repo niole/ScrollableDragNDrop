@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", event => {
   render(
      <ScrollableContainer
         elements={ elts }
-        containerStyle={{ height: 700, width: 1000, left: 0 }}
+        containerStyle={{ height: 700, width: 500, left: 0 }}
         noDragStyle={{ width: 100 }}
         dragStyle={{ width: 100 }}
      />

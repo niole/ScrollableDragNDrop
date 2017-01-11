@@ -28,7 +28,6 @@ export default class Draggable extends Component {
             onDrag,
             onDragEnd,
             noDragStyle,
-            dragClass,
             noDragClass,
             handleClass,
             handleStyle,
@@ -36,9 +35,10 @@ export default class Draggable extends Component {
             isDragging,
             index,
         } = this.props;
+        const dragClass = isDragging ? " dragging" : "";
 
         return (
-            <div style={ isDragging ? dragStyle : noDragStyle } className="draggable">
+            <div style={ isDragging ? dragStyle : noDragStyle } className={ `draggable${dragClass}` }>
                 <div
                     style={ handleStyle }
                     className="draggable handle"
