@@ -316,7 +316,6 @@ export default class ScrollableContainer extends Component {
 
     render() {
         const {
-            elements,
             containerStyle,
             noDragStyle,
             dragStyle,
@@ -328,6 +327,7 @@ export default class ScrollableContainer extends Component {
             elementMargin,
         } = this.props;
         const {
+            elements,
             draggedIndex,
             dragLeft,
         } = this.state;
