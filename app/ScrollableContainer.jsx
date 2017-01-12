@@ -10,16 +10,19 @@ const SCROLL_RATE = 60/1000; //60 frames per second
 const DEFAULT_SCROLL_DIST = 10; //10px per scroll
 
 
-const { string, number, node, arrayOf, object, array } = PropTypes;
+const { shape, string, number, node, arrayOf, object, array } = PropTypes;
 const propTypes = {
     elements: arrayOf(node).isRequired,
-    containerStyle: object, //must have left and width
-    noDragStyle: object, //must have width
-    dragStyle: object,
+    containerStyle: shape({
+        left: number.isRequired,
+        width: number.isRequired
+    }).isRequired,
+    noDragStyle: shape({ width: number.isRequired }).isRequired,
+    dragStyle: shape({ width: number.isRequired }).isRequired,
+    handleStyle: shape({ width: number }),
     dragClass: string,
     noDragClass: string,
     containerClass: string,
-    handleStyle: object,
     handleClass: string,
     elementMargin: number,
 };
@@ -29,7 +32,6 @@ const defaultProps = {
     noDragStyle: {
         width: 100,
     },
-    dragStyle: {},
     containerStyle: {
         left: 0,
         width: 500,
