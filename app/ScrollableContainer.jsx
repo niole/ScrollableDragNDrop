@@ -320,9 +320,6 @@ export default class ScrollableContainer extends Component {
                 nextLeft = this.capDraggedLeft(dragLeft - DEFAULT_SCROLL_DIST, scrollLeft, width, elementMargin);
             }
 
-            console.log("nextLeft", nextLeft);
-            console.log("nextScrollLeft", nextScrollLeft);
-
             this.setState({
                 dragLeft: nextLeft,
                 scrollLeft: nextScrollLeft,
@@ -337,7 +334,7 @@ export default class ScrollableContainer extends Component {
 
     getDragStyle(dragStyle, dragLeft, dragIndex, index) {
         if (index === dragIndex) {
-            return Object.assign(dragStyle, { left: dragLeft });
+            return Object.assign({}, dragStyle, { left: dragLeft });
         }
         return dragStyle;
     }
@@ -372,7 +369,8 @@ export default class ScrollableContainer extends Component {
                     style={ draggedIndex > -1 ? { left: -1*scrollLeft } : {} }
                     className="scrollable-panel">
                     { elements.map((element, index) => (
-                            <Draggable
+                          <Draggable
+                                key={ `draggable-${index}` }
                                 dragStyle={ this.getDragStyle(dragStyle, dragLeft, draggedIndex, index) }
                                 onDrag={ this.onDrag }
                                 onDragEnd={ this.onDragEnd }
