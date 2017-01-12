@@ -21,6 +21,8 @@ const defaultProps = {
     handleStyle: {},
 };
 
+//TODO implement should update for Draggable
+
 export default class Draggable extends Component {
     render() {
         const {

@@ -24,9 +24,10 @@ for (; i < 10; i++) {
 document.addEventListener("DOMContentLoaded", event => {
   render(
      <ScrollableContainer
+        elementMargin={ 10 }
         innerPanelStyle={{ top: 50 }}
         elements={ elts }
-        containerStyle={{ height: 700, width: 500, left: 0 }}
+        containerStyle={{ background: "yellow", height: 700, width: 500, left: 0 }}
         noDragStyle={{ width: 100 }}
         dragStyle={{ width: 100 }}
      />

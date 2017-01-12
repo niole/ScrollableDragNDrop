@@ -10,12 +10,13 @@ const SCROLL_RATE = 60/1000; //60 frames per second
 const DEFAULT_SCROLL_DIST = 10; //10px per scroll
 
 
-const { shape, string, number, node, arrayOf, object, array } = PropTypes;
+const { func, shape, string, number, node, arrayOf, object, array } = PropTypes;
 const propTypes = {
     elements: arrayOf(node).isRequired,
     containerStyle: shape({
         left: number.isRequired,
-        width: number.isRequired
+        width: number.isRequired,
+        height: number.isRequired,
     }).isRequired,
     noDragStyle: shape({ width: number.isRequired }).isRequired,
     dragStyle: shape({ width: number.isRequired }).isRequired,
@@ -26,6 +27,8 @@ const propTypes = {
     containerClass: string,
     handleClass: string,
     elementMargin: number,
+    scrollableContainerShouldUpdate: func,
+    draggableShouldUpdate: func,
 };
 
 const defaultProps = {
@@ -43,6 +46,8 @@ const defaultProps = {
     containerClass: "",
     handleClass: "",
     elementMargin: 0,
+    scrollableContainerShouldUpdate: () => false,
+    draggableShouldUpdate: () => false,
 };
 
 
@@ -57,6 +62,7 @@ export default class ScrollableContainer extends Component {
             scrollLeft: 0,
         };
 
+        this.maxLeftValue = this.getElementLeftFromIndex(props.elements.length-1);
         this.innerPanel = null;
         //set width inner panel
         this.widthInnerPanel = this.getWidthInnerPanel();
@@ -64,7 +70,19 @@ export default class ScrollableContainer extends Component {
         this.onDrag = this.onDrag.bind(this);
     }
 
-    componentWillUpdate() {
+    shouldComponentUpdate(newProps, newState) {
+        const { scrollableContainerShouldUpdate } = newProps;
+
+        return newProps.elements.length !== this.props.elements.length ||
+            newState.draggedIndex !== this.state.draggedIndex ||
+            newState.dragLeft !== this.state.dragLeft ||
+            newState.scrollLeft !== this.state.scrollLeft ||
+            scrollableContainerShouldUpdate.apply(this, arguments);
+    }
+
+    componentWillUpdate(props) {
+        //TODO implement check to see if number of elements has changed
+        this.maxLeftValue = this.getElementLeftFromIndex(props.elements.length-1);
         this.widthInnerPanel = this.getWidthInnerPanel();
     }
 
@@ -81,8 +99,7 @@ export default class ScrollableContainer extends Component {
             elements,
         } = this.props;
         const { width } = noDragStyle;
-        const maxLeftValue = this.getElementLeftFromIndex(elements.length-1);
-        const cappedLeft = Math.max(Math.min(left, maxLeftValue), elementMargin);
+        const cappedLeft = Math.max(Math.min(left, this.maxLeftValue), elementMargin);
 
         return Math.floor(cappedLeft/((elementMargin+width)+elementMargin));
     }
@@ -194,6 +211,8 @@ export default class ScrollableContainer extends Component {
 
 
         const newIndex = this.getElementIndexFromLeft(dragLeft);
+        console.log('draggedIndex', draggedIndex);
+        console.log('newIndex', newIndex);
         const rearrangedElements = this.rearrangeElements(draggedIndex, newIndex);
 
         this.setState({
