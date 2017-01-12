@@ -22,6 +22,7 @@
 }
 
 .handle {
+  cursor: move;
   position: relative;
   display: block;
   top: 10px;
@@ -29,7 +30,6 @@
   width: 10px;
   margin: auto;
   z-index: 2;
-  background: blue;
 }
 
 .test-element {

@@ -1,6 +1,15 @@
 import React, {PropTypes, Component} from 'react';
 import Draggable from './Draggable.jsx';
 
+const DEFAULT_HANDLE_WIDTH = 10;
+const SCROLL_MARGIN = 100;
+const SCROLL_LEFT = "left";
+const SCROLL_RIGHT = "right";
+const DONT_SCROLL = "";
+const SCROLL_RATE = 60/1000; //60 frames per second
+const DEFAULT_SCROLL_DIST = 10; //10px per scroll
+
+
 const { string, number, node, arrayOf, object, array } = PropTypes;
 const propTypes = {
     elements: arrayOf(node).isRequired,
@@ -16,7 +25,7 @@ const propTypes = {
 };
 
 const defaultProps = {
-    handleStyle: {},
+    handleStyle: { width: DEFAULT_HANDLE_WIDTH },
     noDragStyle: {
         width: 100,
     },
@@ -31,14 +40,6 @@ const defaultProps = {
     handleClass: "",
     elementMargin: 0,
 };
-
-
-const SCROLL_MARGIN = 100;
-const SCROLL_LEFT = "left";
-const SCROLL_RIGHT = "right";
-const DONT_SCROLL = "";
-const SCROLL_RATE = 60/1000; //60 frames per second
-const DEFAULT_SCROLL_DIST = 10; //10px per scroll
 
 
 export default class ScrollableContainer extends Component {
@@ -127,10 +128,10 @@ export default class ScrollableContainer extends Component {
      */
     windowToInnerPanelLeft(windowLeft) {
         const { scrollLeft } = this.state;
-        const { containerStyle } = this.props;
+        const { containerStyle, noDragStyle } = this.props;
         const containerLeft = containerStyle.left;
 
-        return windowLeft - containerLeft + scrollLeft;
+        return windowLeft - containerLeft + scrollLeft - noDragStyle.width/2;
     }
 
     onDrag(event, index) {
@@ -144,6 +145,7 @@ export default class ScrollableContainer extends Component {
         } = this.state;
         const { pageX } = event;
 
+
         if (dragLeft === -1) {
             //transfer scrollleft into left value for inner panel
             //set actual scrollLeft to 0
@@ -156,7 +158,7 @@ export default class ScrollableContainer extends Component {
                 scrollLeft: oldScrollLeft,
             });
         } else {
-            const scrollDirection = this.getScrollDir(pageX);
+          const scrollDirection = this.getScrollDir(pageX);
             if (scrollDirection) {
                 //programmatically scroll
                 this.programmaticallyScroll(scrollDirection);
@@ -185,6 +187,7 @@ export default class ScrollableContainer extends Component {
             dragLeft, //grab safe left value as drag end events differ between browsers
             scrollLeft,
         } = this.state;
+
 
         const newIndex = this.getElementIndexFromLeft(dragLeft);
         const rearrangedElements = this.rearrangeElements(draggedIndex, newIndex);
