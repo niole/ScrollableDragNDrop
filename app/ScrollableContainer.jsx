@@ -20,6 +20,7 @@ const propTypes = {
     noDragStyle: shape({ width: number.isRequired }).isRequired,
     dragStyle: shape({ width: number.isRequired }).isRequired,
     handleStyle: shape({ width: number }),
+    innerPanelStyle: object,
     dragClass: string,
     noDragClass: string,
     containerClass: string,
@@ -36,6 +37,7 @@ const defaultProps = {
         left: 0,
         width: 500,
     },
+    innerPanelStyle: {},
     dragClass: "",
     noDragClass: "",
     containerClass: "",
@@ -344,6 +346,13 @@ export default class ScrollableContainer extends Component {
         return dragStyle;
     }
 
+    getInnerPanelStyle(innerPanelStyle, scrollLeft, draggedIndex) {
+        if (draggedIndex > -1) {
+            return Object.assign({}, innerPanelStyle, { left: -1*scrollLeft });
+        }
+        return innerPanelStyle;
+    }
+
     render() {
         const {
             containerStyle,
@@ -355,6 +364,7 @@ export default class ScrollableContainer extends Component {
             handleStyle,
             handleClass,
             elementMargin,
+            innerPanelStyle,
         } = this.props;
         const {
             elements,
@@ -371,7 +381,7 @@ export default class ScrollableContainer extends Component {
                 className={ `scrollable-container${scrollingClass}` }
                 style={ containerStyle }>
                 <div
-                    style={ draggedIndex > -1 ? { left: -1*scrollLeft } : {} }
+                    style={ this.getInnerPanelStyle(innerPanelStyle, scrollLeft, draggedIndex) }
                     className="scrollable-panel">
                     { elements.map((element, index) => (
                           <Draggable
