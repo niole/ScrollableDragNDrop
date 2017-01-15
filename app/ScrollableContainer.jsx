@@ -10,7 +10,7 @@ const SCROLL_RATE = 60/1000; //60 frames per second
 const DEFAULT_SCROLL_DIST = 10; //10px per scroll
 
 
-const { func, shape, string, number, node, arrayOf, object, array } = PropTypes;
+const { bool, func, shape, string, number, node, arrayOf, object, array } = PropTypes;
 const propTypes = {
     elements: arrayOf(node).isRequired,
     containerStyle: shape({
@@ -29,6 +29,7 @@ const propTypes = {
     elementMargin: number,
     scrollableContainerShouldUpdate: func,
     draggableShouldUpdate: func,
+    showHandle: bool,
 };
 
 const defaultProps = {
@@ -48,6 +49,7 @@ const defaultProps = {
     elementMargin: 0,
     scrollableContainerShouldUpdate: () => false,
     draggableShouldUpdate: () => false,
+    showHandle: true,
 };
 
 
@@ -155,7 +157,7 @@ export default class ScrollableContainer extends Component {
         return windowLeft - containerLeft + scrollLeft - noDragStyle.width/2;
     }
 
-    onDrag(event, index) {
+    onDrag(pageX, index) {
         const {
             handleStyle,
             noDragStyle,
@@ -164,7 +166,6 @@ export default class ScrollableContainer extends Component {
             scrollLeft,
             dragLeft,
         } = this.state;
-        const { pageX } = event;
 
 
         if (dragLeft === -1) {
@@ -211,8 +212,6 @@ export default class ScrollableContainer extends Component {
 
 
         const newIndex = this.getElementIndexFromLeft(dragLeft);
-        console.log('draggedIndex', draggedIndex);
-        console.log('newIndex', newIndex);
         const rearrangedElements = this.rearrangeElements(draggedIndex, newIndex);
 
         this.setState({
@@ -384,6 +383,7 @@ export default class ScrollableContainer extends Component {
             handleClass,
             elementMargin,
             innerPanelStyle,
+            showHandle,
         } = this.props;
         const {
             elements,
@@ -393,7 +393,7 @@ export default class ScrollableContainer extends Component {
         } = this.state;
         const scrollingClass = draggedIndex > -1 ? " scrolling" : "";
 
-
+        console.log('dragLeft', dragLeft);
         return (
             <div
                 ref={ ref => this.innerPanel = ref }
@@ -403,7 +403,8 @@ export default class ScrollableContainer extends Component {
                     style={ this.getInnerPanelStyle(innerPanelStyle, scrollLeft, draggedIndex) }
                     className="scrollable-panel">
                     { elements.map((element, index) => (
-                          <Draggable
+                        <Draggable
+                                showHandle={ showHandle }
                                 key={ `draggable-${index}` }
                                 dragStyle={ this.getDragStyle(dragStyle, dragLeft, draggedIndex, index) }
                                 onDrag={ this.onDrag }

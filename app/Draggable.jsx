@@ -8,6 +8,7 @@ const propTypes = {
     noDragStyle: object.isRequired,
     index: number.isRequired,
     isDragging: bool.isRequired,
+    showHandle: bool.isRequired,
     dragClass: string,
     noDragClass: string,
     handleClass: string,
@@ -24,6 +25,16 @@ const defaultProps = {
 //TODO implement should update for Draggable
 
 export default class Draggable extends Component {
+    getNoHandlePageX(event) {
+        const { dragStyle } = this.props;
+        const {
+            offsetX,
+            pageX,
+        } = event.nativeEvent;
+
+        return pageX - offsetX + dragStyle.width/2;
+    }
+
     render() {
         const {
             dragStyle,
@@ -36,17 +47,24 @@ export default class Draggable extends Component {
             children,
             isDragging,
             index,
+            showHandle,
         } = this.props;
         const dragClass = isDragging ? " dragging" : "";
 
         return (
-            <div style={ isDragging ? dragStyle : noDragStyle } className={ `draggable${dragClass}` }>
-                <div
-                    style={ handleStyle }
-                    className="draggable handle"
-                    draggable="true"
-                    onDrag={ event => onDrag(event, index) }
-                    onDragEnd={ event => onDragEnd(index) }/>
+            <div
+                draggable={ showHandle ? "false" : "true" }
+                onDrag={ showHandle ? () => {} : event => onDrag(this.getNoHandlePageX(event), index) }
+                onDragEnd={ showHandle ? () => {} :  onDragEnd }
+                style={ isDragging ? dragStyle : noDragStyle }
+                className={ `draggable${dragClass}` }>
+                { showHandle &&
+                    <div
+                        style={ handleStyle }
+                        className="draggable handle"
+                        draggable="true"
+                        onDrag={ event => onDrag(event.pageX, index) }
+                        onDragEnd={ onDragEnd }/> }
                 { children }
             </div>
         );

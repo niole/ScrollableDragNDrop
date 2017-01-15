@@ -1,5 +1,5 @@
 import React from "react";
-import ReactDOM, {render} from "react-dom";
+import { render } from "react-dom";
 import ScrollableContainer from "./ScrollableContainer.jsx";
 
 const Element = props => <div style={{ background: props.background }} className="test-element">{ props.content }</div>;
@@ -24,10 +24,10 @@ for (; i < 10; i++) {
 document.addEventListener("DOMContentLoaded", event => {
   render(
      <ScrollableContainer
-        elementMargin={ 10 }
+        showHandle={ false }
         innerPanelStyle={{ top: 50 }}
         elements={ elts }
-        containerStyle={{ background: "yellow", height: 700, width: 500, left: 0 }}
+        containerStyle={{ background: "yellow", height: 700, width: 700, left: 0 }}
         noDragStyle={{ width: 100 }}
         dragStyle={{ width: 100 }}
      />
