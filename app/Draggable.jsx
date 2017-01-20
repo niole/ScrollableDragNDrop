@@ -1,5 +1,6 @@
 import React, {PropTypes, Component} from 'react';
 
+
 const { bool, string, object, func, number } = PropTypes;
 const propTypes = {
     dragStyle: object.isRequired,
@@ -22,19 +23,8 @@ const defaultProps = {
     handleStyle: {},
 };
 
-//TODO implement should update for Draggable
 
 export default class Draggable extends Component {
-    getNoHandlePageX(event) {
-        const { dragStyle } = this.props;
-        const {
-            offsetX,
-            pageX,
-        } = event.nativeEvent;
-
-        return pageX - offsetX + dragStyle.width/2;
-    }
-
     render() {
         const {
             dragStyle,
@@ -54,7 +44,7 @@ export default class Draggable extends Component {
         return (
             <div
                 draggable={ showHandle ? "false" : "true" }
-                onDrag={ showHandle ? () => {} : event => onDrag(this.getNoHandlePageX(event), index) }
+                onDrag={ showHandle ? () => {} : event => onDrag(event.pageX, index) }
                 onDragEnd={ showHandle ? () => {} :  onDragEnd }
                 style={ isDragging ? dragStyle : noDragStyle }
                 className={ `draggable${dragClass}` }>

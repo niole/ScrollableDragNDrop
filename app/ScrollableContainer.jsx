@@ -1,5 +1,9 @@
 import React, {PropTypes, Component} from 'react';
 import Draggable from './Draggable.jsx';
+import {
+    getElementLeftFromIndex,
+    getElementIndexFromLeft,
+} from './dragUtil.js';
 
 const DEFAULT_HANDLE_WIDTH = 10;
 const SCROLL_MARGIN = 100;
@@ -57,6 +61,12 @@ export default class ScrollableContainer extends Component {
     constructor(props) {
         super(props);
 
+        const {
+            elementMargin,
+            noDragStyle,
+            elements,
+        } = props;
+
         this.state = {
             elements: props.elements,
             draggedIndex: -1,
@@ -64,7 +74,7 @@ export default class ScrollableContainer extends Component {
             scrollLeft: 0,
         };
 
-        this.maxLeftValue = this.getElementLeftFromIndex(props.elements.length-1);
+        this.maxLeftValue = getElementLeftFromIndex(elements.length-1, elementMargin, noDragStyle)
         this.innerPanel = null;
         //set width inner panel
         this.widthInnerPanel = this.getWidthInnerPanel();
@@ -83,43 +93,14 @@ export default class ScrollableContainer extends Component {
     }
 
     componentWillUpdate(props) {
-        //TODO implement check to see if number of elements has changed
-        this.maxLeftValue = this.getElementLeftFromIndex(props.elements.length-1);
-        this.widthInnerPanel = this.getWidthInnerPanel();
-    }
-
-    /**
-     * @method
-     * @name getElementIndexFromLeft
-     * @param {Number} left
-     * @return {Number} closest index for provided left
-     */
-    getElementIndexFromLeft(left) {
-      const {
+        const {
             elementMargin,
             noDragStyle,
             elements,
-        } = this.props;
-        const { width } = noDragStyle;
-        const cappedLeft = Math.max(Math.min(left, this.maxLeftValue), elementMargin);
+        } = props;
 
-        return Math.floor(cappedLeft/((elementMargin+width)+elementMargin));
-    }
-
-    /**
-     * @method
-     * @name getElementLeftFromIndex
-     * @param {Number} index
-     * @return {Number} the left style value for an undragged element
-     */
-    getElementLeftFromIndex(index) {
-      const {
-            elementMargin,
-            noDragStyle,
-        } = this.props;
-        const { width } = noDragStyle;
-
-        return index*(elementMargin+width)+elementMargin;
+        this.maxLeftValue = getElementLeftFromIndex(elements.length-1, elementMargin, noDragStyle)
+        this.widthInnerPanel = this.getWidthInnerPanel();
     }
 
     /**
@@ -161,6 +142,9 @@ export default class ScrollableContainer extends Component {
         const {
             handleStyle,
             noDragStyle,
+            showHandle,
+            elements,
+            elementMargin,
         } = this.props;
         const {
             scrollLeft,
@@ -169,6 +153,17 @@ export default class ScrollableContainer extends Component {
 
 
         if (dragLeft === -1) {
+            let initialLeft = this.windowToInnerPanelLeft(pageX);
+            if (!showHandle) {
+                //if the user has chosen handless drag, must normalize the initial dragLeft
+                initialLeft =
+                    getElementLeftFromIndex(
+                        getElementIndexFromLeft(initialLeft, elementMargin, noDragStyle, elements, this.maxLeftValue),
+                        elementMargin,
+                        noDragStyle
+                    );
+            }
+
             //transfer scrollleft into left value for inner panel
             //set actual scrollLeft to 0
             const oldScrollLeft = this.innerPanel.scrollLeft;
@@ -176,7 +171,7 @@ export default class ScrollableContainer extends Component {
 
             this.setState({
                 draggedIndex: index,
-                dragLeft: this.windowToInnerPanelLeft(pageX),
+                dragLeft: initialLeft,
                 scrollLeft: oldScrollLeft,
             });
         } else {
@@ -203,6 +198,8 @@ export default class ScrollableContainer extends Component {
         const {
             handleStyle,
             noDragStyle,
+            elementMargin,
+            elements,
         } = this.props;
         const {
             draggedIndex,
@@ -211,7 +208,8 @@ export default class ScrollableContainer extends Component {
         } = this.state;
 
 
-        const newIndex = this.getElementIndexFromLeft(dragLeft);
+        const newIndex = getElementIndexFromLeft(dragLeft, elementMargin, noDragStyle, elements, this.maxLeftValue);
+
         const rearrangedElements = this.rearrangeElements(draggedIndex, newIndex);
 
         this.setState({
@@ -353,8 +351,8 @@ export default class ScrollableContainer extends Component {
         }, SCROLL_RATE);
     }
 
-    getNoDragStyle(noDragStyle, index) {
-        return Object.assign({}, noDragStyle, { left: this.getElementLeftFromIndex(index) });
+    getNoDragStyle(elementMargin, noDragStyle, index) {
+        return Object.assign({}, noDragStyle, { left: getElementLeftFromIndex(index, elementMargin, noDragStyle) });
     }
 
     getDragStyle(dragStyle, dragLeft, dragIndex, index) {
@@ -393,7 +391,6 @@ export default class ScrollableContainer extends Component {
         } = this.state;
         const scrollingClass = draggedIndex > -1 ? " scrolling" : "";
 
-        console.log('dragLeft', dragLeft);
         return (
             <div
                 ref={ ref => this.innerPanel = ref }
@@ -409,7 +406,7 @@ export default class ScrollableContainer extends Component {
                                 dragStyle={ this.getDragStyle(dragStyle, dragLeft, draggedIndex, index) }
                                 onDrag={ this.onDrag }
                                 onDragEnd={ this.onDragEnd }
-                                noDragStyle={ this.getNoDragStyle(noDragStyle, index) }
+                                noDragStyle={ this.getNoDragStyle(elementMargin, noDragStyle, index) }
                                 index={ index }
                                 isDragging={ draggedIndex === index }
                                 dragClass={ dragClass }

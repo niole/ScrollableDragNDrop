@@ -13,7 +13,6 @@
 
 .draggable {
   position: absolute;
-  display: inline-block;
   z-index: 0;
 }
 
