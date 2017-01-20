@@ -25,27 +25,52 @@ const defaultProps = {
 
 
 export default class Draggable extends Component {
+    constructor() {
+        super();
+        this.onDrag = this.onDrag.bind(this);
+        this.onDragEnd = this.onDragEnd.bind(this);
+        this.onDragStart = this.onDragStart.bind(this);
+    }
+
+    onDragStart(event) {
+        const image = document.createElement("img");
+        event.dataTransfer.setDragImage(image, 0, 0);
+    }
+
+    onDrag(event) {
+        const {
+            onDrag,
+            index,
+        } = this.props;
+        onDrag(event.pageX, index);
+    }
+
+    onDragEnd() {
+        const {
+            onDragEnd,
+        } = this.props;
+        onDragEnd();
+    }
+
     render() {
         const {
             dragStyle,
-            onDrag,
-            onDragEnd,
             noDragStyle,
             noDragClass,
             handleClass,
             handleStyle,
             children,
             isDragging,
-            index,
             showHandle,
         } = this.props;
         const dragClass = isDragging ? " dragging" : "";
 
         return (
             <div
+                onDragStart={ this.onDragStart }
                 draggable={ showHandle ? "false" : "true" }
-                onDrag={ showHandle ? () => {} : event => onDrag(event.pageX, index) }
-                onDragEnd={ showHandle ? () => {} :  onDragEnd }
+                onDrag={ showHandle ? () => {} : this.onDrag }
+                onDragEnd={ showHandle ? () => {} :  this.onDragEnd }
                 style={ isDragging ? dragStyle : noDragStyle }
                 className={ `draggable${dragClass}` }>
                 { showHandle &&
@@ -53,8 +78,8 @@ export default class Draggable extends Component {
                         style={ handleStyle }
                         className="draggable handle"
                         draggable="true"
-                        onDrag={ event => onDrag(event.pageX, index) }
-                        onDragEnd={ onDragEnd }/> }
+                        onDrag={ this.onDrag }
+                        onDragEnd={ this.onDragEnd }/> }
                 { children }
             </div>
         );
