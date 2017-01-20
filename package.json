@@ -1,6 +1,6 @@
 {
   "name": "scrollable-drag-n-drop",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "drag n drop within a scrollable panel",
   "main": "dist/main.js",
   "dependencies": {
