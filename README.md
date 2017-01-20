@@ -7,6 +7,11 @@ This is a versatile React.js based package for drag and drop inside of a scrolla
 
 #API and usage
 
+```javascript
+import ScrollableContainer from 'scrollable-drag-n-drop';
+
+```
+
 This package makes the `ScrollableContainer` element available to the user. This is all you need to make your elements draggable.
 
 ## PropTypes
