@@ -1,3 +1,13 @@
+.drag_img {
+  height: 10px;
+  width: 10px;
+  background-image: url('add.svg');
+  background-size: contain;
+  background-repeat: no-repeat;
+  display: inline-block;
+  z-index: 10;
+}
+
 .scrollable-container {
   position: absolute;
   overflow: auto;

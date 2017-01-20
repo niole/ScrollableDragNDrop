@@ -1,4 +1,5 @@
 import React, {PropTypes, Component} from 'react';
+import shortid from 'shortid';
 
 
 const { bool, string, object, func, number } = PropTypes;
@@ -27,14 +28,24 @@ const defaultProps = {
 export default class Draggable extends Component {
     constructor() {
         super();
+        this.dragId = shortid.generate();
+
         this.onDrag = this.onDrag.bind(this);
         this.onDragEnd = this.onDragEnd.bind(this);
         this.onDragStart = this.onDragStart.bind(this);
     }
 
     onDragStart(event) {
+        const {
+            index,
+        } = this.props;
+
         const image = document.createElement("img");
-        event.dataTransfer.setDragImage(image, 0, 0);
+        image.className = "drag_img";
+        image.id = this.dragId;
+
+        document.body.appendChild(image);
+        event.dataTransfer.setDragImage(image, 2, 2);
     }
 
     onDrag(event) {
@@ -49,6 +60,10 @@ export default class Draggable extends Component {
         const {
             onDragEnd,
         } = this.props;
+
+        const image = document.getElementById(this.dragId);
+        document.body.removeChild(image);
+
         onDragEnd();
     }
 
