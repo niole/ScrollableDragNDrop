@@ -1,5 +1,5 @@
 import React, {PropTypes, Component} from 'react';
-import Draggable from './Draggable.jsx';
+import Draggable from './Draggable.js';
 import {
     getElementLeftFromIndex,
     getElementIndexFromLeft,

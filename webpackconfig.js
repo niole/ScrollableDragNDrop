@@ -3,7 +3,7 @@ const path = require('path');
 const config = {
   // Gives you sourcemaps without slowing down rebundling
   devtool: 'eval-source-map',
-  entry: path.join(__dirname, 'app/main.js'),
+  entry: path.join(__dirname, 'app/'),
   output: {
     path: path.join(__dirname, '/dist/'),
     filename: 'bundle.js',
